@@ -1,9 +1,13 @@
+"use client";
+
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import notificationIcon from "../../app/assets/icons/Notification.svg";
 import Image from "next/image";
-import NavLink from "../NavLink";
 import { SearchInput } from "../Search";
+import { AnimatedBackground } from "../motion-primitives/animated-background";
+import NavLink from "../NavLink";
+import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
 	{ href: "/", label: "Главная" },
@@ -13,18 +17,33 @@ const NAV_LINKS = [
 ];
 
 export const Header = () => {
+	const pathname = usePathname();
+
 	return (
 		<header className="flex my-8 mx-12 justify-between items-center py-4 px-7 rounded-[1.875rem] bg-[#fff] color-[#333] text-black">
 			<div className="text-3xl font-medium">EDUGATE</div>
 			<nav>
 				<ul className="flex gap-4 text-black text-lg">
-					{NAV_LINKS.map((link) => (
-						<NavLink
-							key={link.href}
-							href={link.href}
-							label={link.label}
-						/>
-					))}
+					<AnimatedBackground
+						defaultValue={pathname}
+						className="rounded-2xl bg-[#414141]"
+						transition={{
+							type: "spring",
+							bounce: 0.2,
+							duration: 0.3,
+						}}
+					>
+						{NAV_LINKS.map((link) => (
+							<button
+								tabIndex={-1}
+								key={link.href}
+								data-id={link.href}
+								className="inline-flex items-center justify-center text-black transition-colors duration-100 focus-visible:outline-2 data-[checked=true]:text-white"
+							>
+								<NavLink {...link} />
+							</button>
+						))}
+					</AnimatedBackground>
 				</ul>
 			</nav>
 

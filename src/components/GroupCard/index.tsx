@@ -51,8 +51,6 @@ export const GroupCard: FC<GroupCardProps> = ({
 			</CardHeader>
 
 			<CardContent className="flex-1 flex items-end">
-				{" "}
-				{/* Добавлен flex-1 */}
 				<div>
 					<AnimatedNumber
 						className="inline-flex items-center text-4xl"
