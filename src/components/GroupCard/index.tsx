@@ -22,10 +22,7 @@ export const GroupCard: FC<GroupCardProps> = ({
 	}, [isInView, count]);
 
 	return (
-		<Card
-			className="text-xl flex flex-col justify-between h-full"
-			ref={ref}
-		>
+		<Card className="text-xl h-full" ref={ref}>
 			<CardHeader>
 				<div className="flex gap-2 flex-col">
 					<div className="flex gap-2 items-center">

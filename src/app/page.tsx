@@ -5,9 +5,10 @@ import { GroupCardProps } from "@/components/GroupCard/types";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { useInView } from "motion/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createSwapy } from "swapy";
 
-const GROUPS: GroupCardProps[] = [
+const INITIAL_GROUPS: GroupCardProps[] = [
 	{ name: "Группа 1ВД1", count: 2, totalCount: 27, isOnline: true },
 	{
 		name: "Группа 1ВД2",
@@ -19,16 +20,23 @@ const GROUPS: GroupCardProps[] = [
 	{ name: "Группа 1ВД3", count: 2, totalCount: 25, isOnline: true },
 	{ name: "Группа 1ВД4", count: 2, totalCount: 27, isOnline: true },
 	{ name: "Группа 2ВД1", count: 22, totalCount: 24, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
-	{ name: "Группа 2ВД1", count: 12, totalCount: 27, isOnline: true },
+	{ name: "Группа 2ВД2", count: 12, totalCount: 27, isOnline: true },
+	{ name: "Группа 2ВД2", count: 12, totalCount: 27, isOnline: true },
+	{ name: "Группа 2ВД2", count: 12, totalCount: 27, isOnline: true },
+	{ name: "Группа 2ВД2", count: 12, totalCount: 27, isOnline: true },
+	{ name: "Группа 2ВД2", count: 12, totalCount: 27, isOnline: true },
 ];
 
 export default function Home() {
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	const containerRef = useRef(null);
+	const [groups, setGroups] = useState(INITIAL_GROUPS);
+
 	const [value, setValue] = useState(0);
 	const ref = useRef(null);
 	const isInView = useInView(ref);
@@ -37,27 +45,47 @@ export default function Home() {
 		setValue(10000);
 	}
 
+	useEffect(() => {
+		if (!containerRef.current) return;
+
+		const swapy = createSwapy(containerRef.current);
+
+		return () => {
+			swapy.destroy();
+		};
+	}, [groups]);
+
 	return (
-		<div className="grid grid-cols-6 gap-5 min-h-[50vh] grid-auto-rows-[1fr]">
+		<div
+			ref={containerRef}
+			className="grid grid-cols-6 gap-5 min-h-[50vh] grid-auto-rows-[1fr]"
+		>
 			<div className="col-span-2 row-span-2">
 				<Card ref={ref} className="h-full">
 					<CardHeader>
-						<AnimatedNumber
-							className="inline-flex items-center text-2xl"
-							springOptions={{
-								bounce: 0.1,
-								duration: 10000,
-							}}
-							value={value}
-						/>
+						{mounted ? (
+							<AnimatedNumber
+								className="inline-flex items-center text-2xl"
+								springOptions={{ bounce: 0.1, duration: 10000 }}
+								value={value}
+							/>
+						) : (
+							<span>{value}</span>
+						)}
 					</CardHeader>
 					<CardContent></CardContent>
 				</Card>
 			</div>
 
-			{GROUPS.map((group, index) => (
-				<div key={index + 1}>
-					<GroupCard {...group} />
+			{groups.map((group, index) => (
+				<div
+					key={index}
+					data-swapy-slot={index}
+					className="relative h-full"
+				>
+					<div data-swapy-item={index} className="cursor-grab h-full">
+						<GroupCard {...group} />
+					</div>
 				</div>
 			))}
 		</div>

@@ -20,7 +20,7 @@ export const Header = () => {
 	const pathname = usePathname();
 
 	return (
-		<header className="flex my-8 mx-12 justify-between items-center py-4 px-7 rounded-[1.875rem] bg-[#fff] color-[#333] text-black">
+		<header className="flex my-8 mx-12 border justify-between items-center py-4 px-7 rounded-[1.875rem] bg-[#fff] color-[#333] text-black">
 			<div className="text-3xl font-medium">EDUGATE</div>
 			<nav>
 				<ul className="flex gap-4 text-black text-lg">
