@@ -1,7 +1,8 @@
 export interface GroupCardProps {
-	isOnline: boolean;
+	// isOnline: boolean;
+	id: number;
 	name: string;
-	count: number;
-	totalCount: number;
-	lastUpdateTimestamp?: number;
+	present: number;
+	total: number;
+	// lastUpdateTimestamp?: number;
 }

@@ -4,37 +4,31 @@ import { GroupCardProps } from "./types";
 import { AnimatedNumber } from "../motion-primitives/animated-number";
 import { useInView } from "motion/react";
 
-export const GroupCard: FC<GroupCardProps> = ({
-	totalCount,
-	count,
-	isOnline,
-	name,
-	lastUpdateTimestamp,
-}) => {
+export const GroupCard: FC<GroupCardProps> = ({ total, present, name }) => {
 	const ref = useRef(null);
 	const isInView = useInView(ref);
 	const [animatedCount, setAnimatedCount] = useState(0);
 
 	useEffect(() => {
 		if (isInView) {
-			setAnimatedCount(count);
+			setAnimatedCount(present);
 		}
-	}, [isInView, count]);
+	}, [isInView, present]);
 
 	return (
-		<Card className="text-xl h-full" ref={ref}>
+		<Card className="text-xl h-full justify-between" ref={ref}>
 			<CardHeader>
 				<div className="flex gap-2 flex-col">
 					<div className="flex gap-2 items-center">
 						<p>{name}</p>
-						{isOnline ? (
+						{/* {isOnline ? (
 							<div className="rounded-full size-2 bg-green-400" />
 						) : (
 							<div className="rounded-full size-2 bg-red-400" />
-						)}
+						)} */}
 					</div>
 
-					{lastUpdateTimestamp && !isOnline && (
+					{/* {lastUpdateTimestamp && !isOnline && (
 						<div className="text-xs text-[#929292] h-6">
 							Посл. обновление в{" "}
 							{new Date(lastUpdateTimestamp).getHours()}:
@@ -43,7 +37,7 @@ export const GroupCard: FC<GroupCardProps> = ({
 								.toString()
 								.padStart(2, "0")}
 						</div>
-					)}
+					)} */}
 				</div>
 			</CardHeader>
 
@@ -58,9 +52,7 @@ export const GroupCard: FC<GroupCardProps> = ({
 						value={animatedCount}
 					/>
 
-					<span className="text-xl text-[#929292]">
-						/{totalCount}
-					</span>
+					<span className="text-xl text-[#929292]">/{total}</span>
 				</div>
 			</CardContent>
 		</Card>

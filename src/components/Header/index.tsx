@@ -8,6 +8,7 @@ import { SearchInput } from "../Search";
 import { AnimatedBackground } from "../motion-primitives/animated-background";
 import NavLink from "../NavLink";
 import { usePathname } from "next/navigation";
+import { Skeleton } from "../ui/skeleton";
 
 const NAV_LINKS = [
 	{ href: "/", label: "Главная" },
@@ -56,7 +57,9 @@ export const Header = () => {
 
 				<Avatar className="size-16 cursor-pointer">
 					<AvatarImage src="https://avatars.githubusercontent.com/u/74355761?v=4" />
-					<AvatarFallback>Test</AvatarFallback>
+					<AvatarFallback>
+						<Skeleton className="rounded-full w-full h-full" />
+					</AvatarFallback>
 				</Avatar>
 			</div>
 		</header>

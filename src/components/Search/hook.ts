@@ -1,8 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { SearchResponse } from "./types";
 
 export const useInputSearch = () => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [inputValue, setInputValue] = useState("");
+	const [searchResults, setSearchResults] = useState<SearchResponse | null>(
+		null
+	);
+	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +79,39 @@ export const useInputSearch = () => {
 		};
 	}, [handleBlur]);
 
+	const handleSearch = useCallback(async (query: string) => {
+		const normalizedQuery = query.trim().replace(/\s+/g, " ");
+
+		if (normalizedQuery.length < 2) {
+			setSearchResults(null);
+			return;
+		}
+
+		setIsLoading(true);
+		try {
+			const response = await fetch(
+				`http://localhost:1337/api/visitors/search?query=${encodeURIComponent(
+					normalizedQuery
+				)}`
+			);
+			const data = await response.json();
+			setSearchResults(data);
+		} catch (error) {
+			console.error("Search error:", error);
+			setSearchResults(null);
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		const debounceTimeout = setTimeout(() => {
+			handleSearch(inputValue);
+		}, 300);
+
+		return () => clearTimeout(debounceTimeout);
+	}, [inputValue, handleSearch]);
+
 	return {
 		isExpanded,
 		inputValue,
@@ -84,5 +122,7 @@ export const useInputSearch = () => {
 		handleBlur,
 		handleEscape,
 		handleKeyDown,
+		searchResults,
+		isLoading,
 	};
 };
