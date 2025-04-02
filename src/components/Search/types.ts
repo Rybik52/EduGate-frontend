@@ -28,7 +28,8 @@ export interface Person {
 	publishedAt: string | null;
 	documentId: string;
 	locale: string | null;
-	persone_roles: unknown[];
+	persone_roles: { id: number; name: string }[];
+	locations: { id: number; name: string }[];
 	positions: Position[];
 	departaments: Department[];
 	students_groups: StudentsGroup[];

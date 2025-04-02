@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import notificationIcon from "../../app/assets/icons/Notification.svg";
+import notificationIcon from "@/assets/icons/notification.svg";
 import Image from "next/image";
 import { SearchInput } from "../Search";
 import { AnimatedBackground } from "../motion-primitives/animated-background";
@@ -13,7 +13,7 @@ import { Skeleton } from "../ui/skeleton";
 const NAV_LINKS = [
 	{ href: "/", label: "Главная" },
 	{ href: "/pass", label: "Пропуски" },
-	{ href: "/parking", label: "Парковка" },
+	// { href: "/parking", label: "Парковка" },
 	{ href: "/persons", label: "Персоны" },
 ];
 
@@ -21,7 +21,7 @@ export const Header = () => {
 	const pathname = usePathname();
 
 	return (
-		<header className="flex my-8 mx-12 border justify-between items-center py-4 px-7 rounded-[1.875rem] bg-[#fff] color-[#333] text-black">
+		<header className="flex my-8 mx-12 justify-between items-center py-4 px-7 rounded-[1.875rem] bg-[#fff] text-black">
 			<div className="text-3xl font-medium">EDUGATE</div>
 			<nav>
 				<ul className="flex gap-4 text-black text-lg">

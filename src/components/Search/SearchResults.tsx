@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { SearchResponse, Person } from "./types";
@@ -12,40 +13,44 @@ interface PersonCardProps {
 }
 
 const PersonCard = ({ person }: PersonCardProps) => (
-	<div className="p-4 border rounded-lg mb-2 hover:bg-gray-50">
-		<div className="flex gap-2 items-center">
-			{person?.avatar && (
-				<Avatar>
-					<AvatarImage
-						width={50}
-						src={`http://localhost:1337${person.avatar.url}`}
-					/>
-					<AvatarFallback>
-						<Skeleton className="rounded-full w-full h-full" />
-					</AvatarFallback>
-				</Avatar>
+	<Link href={`/persons/${person.id}`}>
+		<div className="p-4 border rounded-lg mb-2 hover:bg-gray-50">
+			<div className="flex gap-2 items-center">
+				{person?.avatar && (
+					<Avatar>
+						<AvatarImage
+							width={50}
+							src={`http://localhost:1337${person.avatar.url}`}
+						/>
+						<AvatarFallback>
+							<Skeleton className="rounded-full w-full h-full" />
+						</AvatarFallback>
+					</Avatar>
+				)}
+
+				<div>
+					<div className="font-medium">
+						{person.surname} {person.firstName} {person.lastName}
+					</div>
+					<div className="text-sm text-gray-600">{person.email}</div>
+				</div>
+			</div>
+
+			{person.students_groups && (
+				<div className="text-sm text-gray-600">
+					{person.students_groups
+						.map((group) => group.name)
+						.join(", ")}
+				</div>
 			)}
 
-			<div>
-				<div className="font-medium">
-					{person.surname} {person.firstName} {person.lastName}
+			{person.positions.length > 0 && (
+				<div className="text-sm text-gray-500 mt-1">
+					{person.positions.map((pos) => pos.name).join(", ")}
 				</div>
-				<div className="text-sm text-gray-600">{person.email}</div>
-			</div>
+			)}
 		</div>
-
-		{person.students_groups && (
-			<div className="text-sm text-gray-600">
-				{person.students_groups.map((group) => group.name).join(", ")}
-			</div>
-		)}
-
-		{person.positions.length > 0 && (
-			<div className="text-sm text-gray-500 mt-1">
-				{person.positions.map((pos) => pos.name).join(", ")}
-			</div>
-		)}
-	</div>
+	</Link>
 );
 
 export const SearchResults = ({ results, isLoading }: SearchResultsProps) => {
