@@ -31,7 +31,7 @@ export function PersonList({ role, title, position }: PersonListProps) {
 	useEffect(() => {
 		const fetchPersons = async () => {
 			try {
-				const searchParam = searchQuery ? `&search=${searchQuery}` : "";
+				// const searchParam = searchQuery ? `&search=${searchQuery}` : "";
 				const queryParams = new URLSearchParams({
 					...(role && { role }),
 					...(position && { position }),
@@ -61,7 +61,7 @@ export function PersonList({ role, title, position }: PersonListProps) {
 		}, 300);
 
 		return () => clearTimeout(debounce);
-	}, [currentPage, searchQuery, role]);
+	}, [currentPage, searchQuery, role, position]);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
