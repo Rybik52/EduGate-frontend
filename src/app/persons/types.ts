@@ -12,6 +12,14 @@ export interface Visitor {
 	positions: string[];
 }
 
+export interface InvitedVisitor extends Visitor {
+	crateDate?: string;
+	invitedBy?: string;
+	invitedAt?: string;
+	invitedUntil?: string;
+	invitedStatus?: "На рассмотрении" | "Одобрено" | "Отказано";
+}
+
 type AvatarType = {
 	url: string;
 };
@@ -28,7 +36,7 @@ export interface ApiResponse {
 
 export interface VisitorCategory {
 	title: string;
-	visitors: Visitor[];
+	visitors: InvitedVisitor[];
 }
 
 export interface Category {
