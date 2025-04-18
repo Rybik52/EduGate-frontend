@@ -39,7 +39,7 @@ export const Header = () => {
 								tabIndex={-1}
 								key={link.href}
 								data-id={link.href}
-								className="inline-flex items-center justify-center text-black transition-colors duration-100 focus-visible:outline-2 data-[checked=true]:text-white"
+								className="inline-flex items-center justify-center text-black cursor-pointer transition-colors duration-100 focus-visible:outline-2 data-[checked=true]:text-white"
 							>
 								<NavLink {...link} />
 							</button>

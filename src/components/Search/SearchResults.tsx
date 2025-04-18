@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { SearchResponse, Person } from "./types";
+import { Badge } from "../ui/badge";
 
 interface SearchResultsProps {
 	results: SearchResponse | null;
@@ -29,6 +30,11 @@ const PersonCard = ({ person }: PersonCardProps) => (
 				)}
 
 				<div>
+					{person.blocked && (
+						<Badge className="bg-red-500 text-white">
+							Заблокирован
+						</Badge>
+					)}
 					<div className="font-medium">
 						{person.surname} {person.firstName} {person.lastName}
 					</div>
@@ -96,6 +102,15 @@ export const SearchResults = ({ results, isLoading }: SearchResultsProps) => {
 				<div className="mb-4">
 					<h3 className="text-lg mb-2">Студенты</h3>
 					{results.students.map((person) => (
+						<PersonCard key={person.id} person={person} />
+					))}
+				</div>
+			)}
+
+			{results.other.length > 0 && (
+				<div className="mb-4">
+					<h3 className="text-lg mb-2">Гости</h3>
+					{results.other.map((person) => (
 						<PersonCard key={person.id} person={person} />
 					))}
 				</div>

@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Person } from "@/components/Search/types";
 import { Avatar } from "../ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Skeleton } from "../ui/skeleton";
@@ -9,31 +7,24 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Loader } from "./Loader";
+import { Badge } from "../ui/badge";
+import { AttendanceModal } from "./AttendanceModal";
+import { usePersonDetails } from "./usePersonDetails";
+
 interface PersonDetailsProps {
 	id: string;
 }
 
 export function PersonDetails({ id }: PersonDetailsProps) {
-	const [person, setPerson] = useState<Person | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		const fetchPerson = async () => {
-			try {
-				const response = await fetch(
-					`http://localhost:1337/api/visitors/${id}/detailed`
-				);
-				const data = await response.json();
-				setPerson(data);
-			} catch (error) {
-				console.error("Failed to fetch person:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchPerson();
-	}, [id]);
+	const {
+		person,
+		isLoading,
+		attendance,
+		selectedAttendance,
+		isModalOpen,
+		handleDayClick,
+		handleModalClose,
+	} = usePersonDetails(id);
 
 	if (isLoading) {
 		return <Loader />;
@@ -73,7 +64,9 @@ export function PersonDetails({ id }: PersonDetailsProps) {
 							+ Редактировать
 						</Button>
 						<Button className="bg-[#FFD9DB] rounded-3xl text-[#FB444B] hover:opacity-70 hover:text-white">
-							Заблокировать
+							{person.blocked
+								? "Разблокировать"
+								: "Заблокировать"}
 						</Button>
 					</div>
 				</div>
@@ -109,75 +102,96 @@ export function PersonDetails({ id }: PersonDetailsProps) {
 				<div className="grid grid-cols-3 gap-6">
 					{person.persone_roles.length !== 0 && (
 						<div>
-							<label className="block mb-2">Роли</label>
-							<Input
-								disabled
-								type="text"
-								placeholder="Роли"
-								value={person.persone_roles
-									.map((role) => role.name)
-									.join(", ")}
-							/>
+							<p className="block mb-2">Роли</p>
+							<div className="flex gap-1 flex-wrap">
+								{person.persone_roles.map((role) => (
+									<Badge key={role.id}>{role.name}</Badge>
+								))}
+							</div>
 						</div>
 					)}
 
 					{person.positions.length !== 0 && (
-						<div>
-							<label className="block mb-2">Должность</label>
-							<Input
-								disabled
-								type="text"
-								placeholder="Роли"
-								value={person.positions
-									.map((position) => position.name)
-									.join(", ")}
-							/>
+						<div className="flex flex-col flex-wrap">
+							<p className="block mb-2">Должность</p>
+							<div className="flex gap-1 flex-wrap">
+								{person.positions.map((position) => (
+									<Badge key={position.id}>
+										{position.name}
+									</Badge>
+								))}
+							</div>
 						</div>
 					)}
 
-					<div>
-						<label className="block mb-2">Площадки</label>
-						<Input
-							disabled
-							type="text"
-							placeholder="Площадки"
-							value={person.locations
-								.map((location) => location.name)
-								.join(", ")}
-						/>
-					</div>
+					{person.locations.length !== 0 && (
+						<div className="flex flex-col flex-wrap">
+							<p className="block mb-2">Площадки</p>
+							<div className="flex gap-1 flex-wrap">
+								{person.locations.map((location) => (
+									<Badge key={location.id}>
+										{location.name}
+									</Badge>
+								))}
+							</div>
+						</div>
+					)}
 
-					<div>
-						<label className="block mb-2">Департаменты</label>
-						<Input
-							disabled
-							type="text"
-							placeholder="Площадки"
-							value={person.departaments
-								.map((departament) => departament.name)
-								.join(", ")}
-						/>
-					</div>
+					{person.departaments.length !== 0 && (
+						<div className="flex flex-col flex-wrap">
+							<p className="block mb-2">Департаменты</p>
+							<div className="flex gap-1 flex-wrap">
+								{person.departaments.map((departament) => (
+									<Badge key={departament.id}>
+										{departament.name}
+									</Badge>
+								))}
+							</div>
+						</div>
+					)}
 
 					{person.students_groups.length !== 0 && (
-						<div>
-							<label className="block mb-2">Учебные группы</label>
-							<Input
-								disabled
-								type="text"
-								placeholder="Учебные группы"
-								value={person.students_groups
-									.map((group) => group.name)
-									.join(", ")}
-							/>
+						<div className="flex flex-col flex-wrap">
+							<p className="block mb-2">Учебные группы</p>
+
+							<div className="flex gap-1 flex-wrap">
+								{person.students_groups.map((group) => (
+									<Badge key={group.id}>{group.name}</Badge>
+								))}
+							</div>
 						</div>
 					)}
 				</div>
 			</div>
 
 			<div className="w-1/2">
-				<Calendar className="w-full h-full bg-white rounded-2xl" />
+				<Calendar
+					mode="multiple"
+					selected={
+						attendance?.map((record) => new Date(record.date)) || []
+					}
+					onDayClick={handleDayClick}
+					className="w-full h-full bg-white rounded-2xl"
+					modifiers={{
+						attended:
+							attendance?.map(
+								(record) => new Date(record.date)
+							) || [],
+					}}
+					modifiersStyles={{
+						attended: {
+							backgroundColor: "#CDEFD7",
+							color: "#000",
+						},
+					}}
+					disabled={[]}
+				/>
 			</div>
+			<AttendanceModal
+				isOpen={isModalOpen}
+				onClose={handleModalClose}
+				attendance={selectedAttendance}
+			/>
 		</div>
 	);
 }

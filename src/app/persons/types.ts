@@ -1,10 +1,29 @@
 export interface Visitor {
 	id: number;
-	name: string;
-	group?: string;
-	tags: string[];
+	fullName: string;
+	email: string;
+	group: string | null;
+	roles: string[];
 	status: "present" | "absent";
-	blocked?: boolean;
+	lastEntry: string | null;
+	lastExit: string | null;
+	blocked: boolean;
+	avatar?: AvatarType;
+	positions: string[];
+}
+
+type AvatarType = {
+	url: string;
+};
+
+export interface ApiResponse {
+	data: Visitor[];
+	pagination: {
+		page: number;
+		pageSize: number;
+		pageCount: number;
+		total: number;
+	};
 }
 
 export interface VisitorCategory {
