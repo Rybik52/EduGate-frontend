@@ -5,8 +5,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryCard } from "./components/CategoryCard";
 import { VisitorList } from "./components/VisitorList";
-import { ApiResponse, VisitorCategory } from "./types";
-import { MOCK_CATEGORIES } from "./data";
+import { ApiResponse, VisitorCategory, Category } from "./types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 
@@ -26,8 +25,52 @@ export default function PersonsPage() {
 	const [visitors, setVisitors] = useState<VisitorCategory[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("all");
 	const [isLoading, setIsLoading] = useState(true);
+	const [categories, setCategories] = useState<Category[]>([]);
 
-	// Separate effect for fetching visitors
+	// Эффект для загрузки категорий
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await fetch(
+					"http://localhost:1337/api/visitors/categories"
+				);
+				const data = (await response.json()) as Category[];
+
+				// Проверяем, есть ли уже категория "Все" в данных
+				const hasAllCategory = data.some(
+					(cat) => cat.categorySysName === "all"
+				);
+
+				// Добавляем категорию "Все" только если её нет в данных
+				const allCategories = hasAllCategory
+					? data
+					: [
+							{
+								categoryName: "Все",
+								categorySysName: "all",
+								total: 0,
+							},
+							...data,
+					  ];
+
+				setCategories(allCategories);
+			} catch (error) {
+				console.error("Ошибка при загрузке категорий:", error);
+				// Если не удалось загрузить категории, используем пустой массив
+				setCategories([
+					{
+						categoryName: "Все",
+						categorySysName: "all",
+						total: 0,
+					},
+				]);
+			}
+		};
+
+		fetchCategories();
+	}, []);
+
+	// Эффект для загрузки посетителей
 	useEffect(() => {
 		const fetchVisitors = async () => {
 			setIsLoading(true);
@@ -59,9 +102,8 @@ export default function PersonsPage() {
 				const data: ApiResponse = await response.json();
 
 				if (selectedCategory === "all") {
-					const categorizedData = MOCK_CATEGORIES.filter(
-						(cat) => cat.categorySysName !== "all"
-					)
+					const categorizedData = categories
+						.filter((cat) => cat.categorySysName !== "all")
 						.map((category) => {
 							const categoryVisitors = data.data.filter(
 								(visitor) => {
@@ -87,7 +129,7 @@ export default function PersonsPage() {
 					setVisitors([
 						{
 							title:
-								MOCK_CATEGORIES.find(
+								categories.find(
 									(c) =>
 										c.categorySysName === selectedCategory
 								)?.categoryName || "Все",
@@ -104,7 +146,7 @@ export default function PersonsPage() {
 
 		const debounce = setTimeout(fetchVisitors, 300);
 		return () => clearTimeout(debounce);
-	}, [searchQuery, selectedCategory]);
+	}, [searchQuery, selectedCategory, categories]);
 
 	const handleCategoryClick = (sysName: string) => {
 		setSelectedCategory(sysName);
@@ -114,7 +156,7 @@ export default function PersonsPage() {
 	return (
 		<div className="flex gap-8 h-[75vh]">
 			<div className="flex flex-col gap-8 w-80 overflow-y-auto">
-				{isLoading
+				{isLoading && categories.length === 0
 					? Array(5)
 							.fill(0)
 							.map((_, i) => (
@@ -126,7 +168,7 @@ export default function PersonsPage() {
 									<Skeleton className="h-5 w-1/4 bg-gray-200" />
 								</Card>
 							))
-					: MOCK_CATEGORIES?.map((category) => (
+					: categories?.map((category) => (
 							<CategoryCard
 								key={category.categorySysName}
 								name={category.categoryName}
