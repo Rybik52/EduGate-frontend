@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import notificationIcon from "@/assets/icons/notification.svg";
 import Image from "next/image";
 import { SearchInput } from "../Search";
 import { AnimatedBackground } from "../motion-primitives/animated-background";
 import NavLink from "../NavLink";
 import { usePathname } from "next/navigation";
-import { Skeleton } from "../ui/skeleton";
+import { UserAvatar } from "../UserAvatar";
 
 const NAV_LINKS = [
 	{ href: "/", label: "Главная" },
@@ -55,12 +54,7 @@ export const Header = () => {
 					<Image src={notificationIcon} alt="Уведомления" />
 				</div>
 
-				<Avatar className="size-16 cursor-pointer">
-					<AvatarImage src="https://avatars.githubusercontent.com/u/74355761?v=4" />
-					<AvatarFallback>
-						<Skeleton className="rounded-full w-full h-full" />
-					</AvatarFallback>
-				</Avatar>
+				<UserAvatar />
 			</div>
 		</header>
 	);
