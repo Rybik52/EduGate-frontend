@@ -1,23 +1,20 @@
+import { InvitedVisitor } from "../pass/guests/types";
+
 export interface Visitor {
 	id: number;
 	fullName: string;
+	surname?: string;
+	firstName?: string;
+	lastName?: string;
 	email: string;
 	group: string | null;
 	roles: string[];
 	status: "present" | "absent";
-	lastEntry: string | null;
-	lastExit: string | null;
-	blocked: boolean;
+	lastEntry?: string | null;
+	lastExit?: string | null;
+	blocked?: boolean;
 	avatar?: AvatarType;
 	positions: string[];
-}
-
-export interface InvitedVisitor extends Visitor {
-	crateDate?: string;
-	invitedBy?: string;
-	invitedAt?: string;
-	invitedUntil?: string;
-	invitedStatus?: "На рассмотрении" | "Одобрено" | "Отказано";
 }
 
 type AvatarType = {
